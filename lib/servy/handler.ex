@@ -39,6 +39,10 @@ defmodule Servy.Handler do
     %{ conv | resp_body: "Teddy, Smokey, Paddington" }
   end
 
+  def route(conv, _method, path) do
+    %{ conv | status: 404, resp_body: "No #{path} here!"}
+  end
+
   def format_response(conv) do
     # TODO: Use values in the map to create an HTTP response string:
     """
