@@ -52,11 +52,10 @@ defmodule Servy.Handler do
   end
 
   def format_response(conv) do
-    # TODO: Use values in the map to create an HTTP response string:
     """
-    HTTP/1.1 200 OK
+    HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
     Content-Type: text/html
-    Content-Length: #{byte_size(conv.resp_body)}
+    Content-Length: #{String.length(conv.resp_body)}
 
     #{conv.resp_body}
     """
