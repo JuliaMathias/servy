@@ -4,7 +4,10 @@ defmodule Servy.Handler do
   This module handles Servy
   """
 
-  request = """
+
+end
+
+request = """
   GET /wildthings HTTP/1.1
   Host: example.com
   User-Agent: ExampleBrowser/1.0
@@ -19,4 +22,3 @@ defmodule Servy.Handler do
 
   Bears, Lions, Tigers
   """
-end
