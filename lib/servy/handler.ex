@@ -10,19 +10,22 @@ defmodule Servy.Handler do
     # format_response(conv)
     request
     |> parse
+    |> rewrite_path
     |> log
     |> route
     |> format_response
   end
 
-  def log(conv), do: IO.inspect conv
-
   def parse(request) do
     [method, path, _] =
       request
+      |> IO.inspect(label: "original request")
       |> String.split("\n")
+      |> IO.inspect(label: "after string split")
       |> List.first
+      |> IO.inspect(label: "after selecting first")
       |> String.split(" ")
+      |> IO.inspect(label: "after second string split")
 
     %{ method: method,
        path: path,
@@ -30,6 +33,13 @@ defmodule Servy.Handler do
        status: nil
      }
   end
+
+  def rewrite_path(%{path: "/wildlife"} = conv) do
+    %{ conv | path: "/wildthings" }
+  end
+
+  def log(conv), do: IO.inspect(conv, label: "LOG")
+
 
   def route(conv) do
     route(conv, conv.method, conv.path)
@@ -56,6 +66,7 @@ defmodule Servy.Handler do
   end
 
   def format_response(conv) do
+    IO.inspect(conv, label: "before format")
     """
     HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
     Content-Type: text/html
@@ -121,6 +132,18 @@ User-Agent: ExampleBrowser/1.0
 Accept: */*
 
 """
+response = Servy.Handler.handle(request)
+
+IO.puts response
+
+request = """
+GET /wildlife HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
 response = Servy.Handler.handle(request)
 
 IO.puts response
