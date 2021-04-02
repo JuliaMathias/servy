@@ -14,6 +14,7 @@ defmodule Servy.Handler do
     |> log
     |> route
     |> track
+    |> emojify
     |> format_response
   end
 
@@ -39,7 +40,7 @@ defmodule Servy.Handler do
     %{ conv | path: "/wildthings" }
   end
 
-  def rewrite_path(%{ method: "GET", path: "/bears?id=" <> id } = conv) do
+  def rewrite_path(%{ path: "/bears?id=" <> id } = conv) do
     %{ conv | path: "/bears/#{id}" }
   end
 
@@ -71,6 +72,18 @@ defmodule Servy.Handler do
 
   def track(conv), do: conv
 
+  def emojify(%{status: 200} = conv) do
+    emojies = String.duplicate("✨ ", 5)
+    body = emojies <> "\n" <> "\n" <> conv.resp_body <> "\n" <> "\n" <> emojies
+
+    %{ conv | resp_body: body }
+
+  end
+
+  def emojify(conv), do: conv
+
+  @spec format_response(atom | %{:resp_body => binary, :status => any, optional(any) => any}) ::
+          <<_::64, _::_*8>>
   def format_response(conv) do
     IO.inspect(conv, label: "before format")
     """
