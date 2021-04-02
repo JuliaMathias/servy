@@ -48,6 +48,9 @@ defmodule Servy.Handler do
 
   def log(conv), do: IO.inspect(conv, label: "LOG")
 
+  def route(%{ method: "DELETE", path: "/bears/" <> _id } = conv) do
+    %{ conv | status: 403, resp_body: "Deleting a bear is forbidden!"}
+  end
 
   def route(%{ method: "GET", path: "/wildthings" } = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
@@ -82,8 +85,6 @@ defmodule Servy.Handler do
 
   def emojify(conv), do: conv
 
-  @spec format_response(atom | %{:resp_body => binary, :status => any, optional(any) => any}) ::
-          <<_::64, _::_*8>>
   def format_response(conv) do
     IO.inspect(conv, label: "before format")
     """
