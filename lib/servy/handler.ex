@@ -38,6 +38,8 @@ defmodule Servy.Handler do
     %{ conv | path: "/wildthings" }
   end
 
+  def rewrite_path(conv), do: conv
+
   def log(conv), do: IO.inspect(conv, label: "LOG")
 
 
