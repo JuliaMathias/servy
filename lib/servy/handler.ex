@@ -5,6 +5,7 @@ defmodule Servy.Handler do
   @pages_path Path.expand("../../pages", __DIR__)
 
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
+  import Servy.Parser, only: [parse: 1]
 
   @doc "Transforms the request into a response."
   def handle(request) do
@@ -21,23 +22,7 @@ defmodule Servy.Handler do
     |> format_response
   end
 
-  def parse(request) do
-    [method, path, _] =
-      request
-      |> IO.inspect(label: "original request")
-      |> String.split("\n")
-      |> IO.inspect(label: "after string split")
-      |> List.first
-      |> IO.inspect(label: "after selecting first")
-      |> String.split(" ")
-      |> IO.inspect(label: "after second string split")
 
-    %{ method: method,
-       path: path,
-       resp_body: "",
-       status: nil
-     }
-  end
 
   def route(%{ method: "DELETE", path: "/bears/" <> _id } = conv) do
     %{ conv | status: 403, resp_body: "Deleting a bear is forbidden!"}
