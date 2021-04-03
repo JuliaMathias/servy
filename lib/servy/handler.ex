@@ -10,23 +10,14 @@ defmodule Servy.Handler do
   import Servy.Parser, only: [parse: 1]
 
   @doc "Transforms the request into a response."
-
   def handle(request) do
-    # conv = parse(request)
-    # conv = route(conv)
-    # format_response(conv)
     request
     |> parse
     |> rewrite_path
     |> log
     |> route
     |> track
-    |> emojify
     |> format_response
-  end
-
-  def route(%Conv{ method: "DELETE", path: "/bears/" <> _id } = conv) do
-    %{ conv | status: 403, resp_body: "Deleting a bear is forbidden!"}
   end
 
   def route(%Conv{ method: "GET", path: "/wildthings" } = conv) do
@@ -41,18 +32,17 @@ defmodule Servy.Handler do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
 
-  def route(%Conv{method: "GET", path: "pages/" <> file} = conv) do
-    @pages_path
-    |> Path.join(file <> ".html")
-    |> File.read
-    |> handle_file(conv)
+  # name=Baloo&type=Brown
+  def route(%Conv{method: "POST", path: "/bears"} = conv) do
+    %{ conv | status: 201,
+              resp_body: "Created a #{conv.params["type"]} bear named #{conv.params["name"]}!" }
   end
 
-  def route(%Conv{method: "GET", path: "/bears/new"} = conv) do
-    @pages_path
-    |> Path.join("form.html")
-    |> File.read
-    |> handle_file(conv)
+  def route(%Conv{method: "GET", path: "/about"} = conv) do
+      @pages_path
+      |> Path.join("about.html")
+      |> File.read
+      |> handle_file(conv)
   end
 
   def route(%Conv{ path: path } = conv) do
@@ -71,18 +61,7 @@ defmodule Servy.Handler do
     %{ conv | status: 500, resp_body: "File error: #{reason}" }
   end
 
-  def emojify(%Conv{status: 200} = conv) do
-    emojies = String.duplicate("✨ ", 5)
-    body = emojies <> "\n" <> "\n" <> conv.resp_body <> "\n" <> "\n" <> emojies
-
-    %{ conv | resp_body: body }
-
-  end
-
-  def emojify(conv), do: conv
-
   def format_response(%Conv{} = conv) do
-    IO.inspect(conv, label: "before format")
     """
     HTTP/1.1 #{Conv.full_status(conv)}
     Content-Type: text/html
@@ -131,12 +110,13 @@ response = Servy.Handler.handle(request)
 IO.puts response
 
 request = """
-DELETE /bears/1 HTTP/1.1
+GET /bears/1 HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
 
 """
+
 response = Servy.Handler.handle(request)
 
 IO.puts response
@@ -153,8 +133,9 @@ response = Servy.Handler.handle(request)
 
 IO.puts response
 
+
 request = """
-GET /bears?id=1 HTTP/1.1
+GET /about HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
@@ -166,12 +147,16 @@ response = Servy.Handler.handle(request)
 IO.puts response
 
 request = """
-GET /bears/new HTTP/1.1
+POST /bears HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 21
 
+name=Baloo&type=Brown
 """
+
 response = Servy.Handler.handle(request)
 
 IO.puts response

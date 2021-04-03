@@ -3,7 +3,7 @@ defmodule Servy.Parser do
   alias Servy.Conv
 
   def parse(request) do
-    IO.inspect(label: "original request")
+    # IO.inspect(request, label: "original request")
 
     [top, params_string] = String.split(request, "\n\n")
     IO.inspect(top, label: "top")
