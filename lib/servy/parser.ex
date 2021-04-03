@@ -3,19 +3,23 @@ defmodule Servy.Parser do
   alias Servy.Conv
 
   def parse(request) do
-    [method, path, _] =
-      request
-      |> IO.inspect(label: "original request")
-      |> String.split("\n")
-      |> IO.inspect(label: "after string split")
-      |> List.first
-      |> IO.inspect(label: "after selecting first")
-      |> String.split(" ")
-      |> IO.inspect(label: "after second string split")
+    [top, params_string] = String.split(request, "\n\n")
 
-      %Conv{
-        method: method,
-        path: path
-      }
+    [request_line | header_lines] = String.split(top, "\n")
+
+    [method, path, _] = String.split(request_line, " ")
+
+    params = parse_params(params_string)
+
+    %Conv{
+       method: method,
+       path: path,
+       params: params
+     }
   end
+
+  def parse_params(params_string) do
+    params_string |> String.trim |> URI.decode_query
+  end
+
 end
