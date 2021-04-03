@@ -2,6 +2,8 @@ defmodule Servy.Handler do
 
   @moduledoc "Handles HTTP requests."
 
+  alias Servy.Conv
+
   @pages_path Path.expand("../../pages", __DIR__)
 
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
