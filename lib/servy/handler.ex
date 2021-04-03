@@ -10,6 +10,7 @@ defmodule Servy.Handler do
   import Servy.Parser, only: [parse: 1]
 
   @doc "Transforms the request into a response."
+
   def handle(request) do
     # conv = parse(request)
     # conv = route(conv)
@@ -24,39 +25,37 @@ defmodule Servy.Handler do
     |> format_response
   end
 
-
-
-  def route(%{ method: "DELETE", path: "/bears/" <> _id } = conv) do
+  def route(%Conv{ method: "DELETE", path: "/bears/" <> _id } = conv) do
     %{ conv | status: 403, resp_body: "Deleting a bear is forbidden!"}
   end
 
-  def route(%{ method: "GET", path: "/wildthings" } = conv) do
+  def route(%Conv{ method: "GET", path: "/wildthings" } = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
 
-  def route(%{ method: "GET", path: "/bears" } = conv) do
+  def route(%Conv{ method: "GET", path: "/bears" } = conv) do
     %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
   end
 
-  def route(%{ method: "GET", path: "/bears/" <> id } = conv) do
+  def route(%Conv{ method: "GET", path: "/bears/" <> id } = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
 
-  def route(%{method: "GET", path: "pages/" <> file} = conv) do
+  def route(%Conv{method: "GET", path: "pages/" <> file} = conv) do
     @pages_path
     |> Path.join(file <> ".html")
     |> File.read
     |> handle_file(conv)
   end
 
-  def route(%{method: "GET", path: "/bears/new"} = conv) do
+  def route(%Conv{method: "GET", path: "/bears/new"} = conv) do
     @pages_path
     |> Path.join("form.html")
     |> File.read
     |> handle_file(conv)
   end
 
-  def route(%{ path: path } = conv) do
+  def route(%Conv{ path: path } = conv) do
     %{ conv | status: 404, resp_body: "No #{path} here!"}
   end
 
@@ -72,7 +71,7 @@ defmodule Servy.Handler do
     %{ conv | status: 500, resp_body: "File error: #{reason}" }
   end
 
-  def emojify(%{status: 200} = conv) do
+  def emojify(%Conv{status: 200} = conv) do
     emojies = String.duplicate("✨ ", 5)
     body = emojies <> "\n" <> "\n" <> conv.resp_body <> "\n" <> "\n" <> emojies
 
@@ -82,7 +81,7 @@ defmodule Servy.Handler do
 
   def emojify(conv), do: conv
 
-  def format_response(conv) do
+  def format_response(%Conv{} = conv) do
     IO.inspect(conv, label: "before format")
     """
     HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
