@@ -10,10 +10,9 @@ defmodule Servy.Parser do
       |> String.split(" ")
       |> IO.inspect(label: "after second string split")
 
-    %{ method: method,
-       path: path,
-       resp_body: "",
-       status: nil
-     }
+      %Conv{
+        method: method,
+        path: path
+      }
   end
 end
