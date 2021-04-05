@@ -1,6 +1,6 @@
 # Servy
 
-This is an app developed during Pragmatic Studio's Elixir and OTP course.
+This is an app developed during Pragmatic Studio's Elixir and OTP course!
 
 ## Installation
 
