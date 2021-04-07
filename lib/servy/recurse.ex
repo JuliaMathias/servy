@@ -6,11 +6,19 @@ defmodule Recurse do
 
   def sum([], total), do: total
 
-  def triple([head|tail]) do
-    [head*3 | triple(tail)]
+  def triple(list) do
+    IO.puts "Normal function | #{inspect(list)}"
+    triple(list, [])
   end
 
-  def triple([]), do: []
+  defp triple([head|tail], current_list) do
+    IO.puts "Private funtion| Head: #{head} Tail: #{inspect(tail)} Current list: #{inspect(current_list)}"
+    triple(tail, [head*3 | current_list])
+  end
+
+  defp triple([], current_list) do
+    current_list |> Enum.reverse() |> IO.inspect
+  end
 
 
 end
