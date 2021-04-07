@@ -1,4 +1,8 @@
 defmodule Servy.BearController do
+
+  alias Servy.Wildthings
+  alias Servy.Bear
+
   def index(conv) do
     items =
       Wildthings.list_bears()
