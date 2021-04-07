@@ -20,6 +20,7 @@ defmodule Recurse do
     current_list |> Enum.reverse() |> IO.inspect
   end
 
+  # comment to test something
 
 end
 
