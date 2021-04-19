@@ -1,5 +1,4 @@
 defmodule Servy.BearController do
-
   alias Servy.Wildthings
   alias Servy.Bear
 
@@ -32,4 +31,5 @@ defmodule Servy.BearController do
 
     %{ conv | status: 200, resp_body: content }
   end
+
 end
