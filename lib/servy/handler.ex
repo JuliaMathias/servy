@@ -9,6 +9,7 @@ defmodule Servy.Handler do
 
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Servy.Parser, only: [parse: 1]
+  import Servy.View, only: [render: 3]
 
   @doc "Transforms the request into a response."
   def handle(request) do
@@ -32,10 +33,10 @@ defmodule Servy.Handler do
 
     where_is_bigfoot = Task.await(task)
 
-    %{conv | status: 200, resp_body: inspect({snapshots, where_is_bigfoot})}
+    render(conv, "sensors.eex", snapshots: snapshots, location: where_is_bigfoot)
   end
 
-  def route(%Conv{method: "GET", path: "/kaboom"} = conv) do
+  def route(%Conv{method: "GET", path: "/kaboom"} = _conv) do
     raise "Kaboom!"
   end
 
