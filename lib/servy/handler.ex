@@ -22,7 +22,7 @@ defmodule Servy.Handler do
     |> format_response
   end
 
-  def route(%Conv{method: "GET", path: "/snapshots"} = conv) do
+  def route(%Conv{method: "GET", path: "/sensors"} = conv) do
     task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
 
     snapshots =
@@ -39,7 +39,7 @@ defmodule Servy.Handler do
     raise "Kaboom!"
   end
 
-  def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
+  def route(%Conv{method: "GET", path: "/hibernate" <> time} = conv) do
     time |> String.to_integer() |> :timer.sleep()
 
     %{conv | status: 200, resp_body: "Awake!"}
