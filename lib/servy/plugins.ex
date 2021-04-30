@@ -1,15 +1,14 @@
 defmodule Servy.Plugins do
-
   @moduledoc "plugin functions"
 
   alias Servy.Conv
 
   def rewrite_path(%Conv{path: "/wildlife"} = conv) do
-    %{ conv | path: "/wildthings" }
+    %{conv | path: "/wildthings"}
   end
 
-  def rewrite_path(%Conv{ path: "/bears?id=" <> id } = conv) do
-    %{ conv | path: "/bears/#{id}" }
+  def rewrite_path(%Conv{path: "/bears?id=" <> id} = conv) do
+    %{conv | path: "/bears/#{id}"}
   end
 
   def rewrite_path(%Conv{} = conv), do: conv
@@ -18,10 +17,13 @@ defmodule Servy.Plugins do
 
   @doc "Logs 404 requests"
   def track(%Conv{status: 404, path: path} = conv) do
-    IO.puts "Warning: #{path} is on the loose!"
+    if Mix.env() != :test do
+      IO.puts("Warning: #{path} is on the loose!")
+      Servy.FourOhFourCounter.bump_count(path)
+    end
+
     conv
   end
 
   def track(%Conv{} = conv), do: conv
-
 end
