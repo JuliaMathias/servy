@@ -1,4 +1,7 @@
 defmodule Servy.SensorServer do
+  @moduledoc """
+  Logic for the sensor server
+  """
   @name :sensor_server
   # :timer.seconds(5)
   @refresh_interval :timer.minutes(60)
